@@ -76,6 +76,8 @@ public class PlayerMovement : MonoBehaviour
         control = orientation.transform.TransformDirection(control);
         control.y = 0; // Prevent movement in the vertical direction
 
+        if(CutPath.instance.CutActive) { control = Vector2.zero; }
+
         moveVelocity = Vector3.Lerp(moveVelocity, control * HorizontalSpeed, HorizontalAcc * Time.deltaTime);
 
         //m_PlayerData.Walking = true;
