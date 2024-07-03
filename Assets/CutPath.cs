@@ -1,3 +1,4 @@
+using Cinemachine;
 using EzySlice;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,10 @@ public class CutPath : MonoBehaviour
     public static CutPath instance;
     public bool CutActive=false;
     public MeshRenderer renderer;
+    public CinemachineImpulseSource impulse;
+    public bool SlicetoLeft = false;
+    public ParticleSystem Slice;
+    public ParticleSystem[] Sparks;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,12 +44,20 @@ public class CutPath : MonoBehaviour
 
     void Cut()
     {
+        Slice.Play();
         print("Slice and dice");
         Collider[] Hits = Physics.OverlapBox(this.gameObject.transform.position, new Vector3(10, 0.1f, 10), this.transform.rotation, 1 << LayerMask.NameToLayer("Cuttable"));
 
         if (Hits.Length <= 0) return;
 
-        for(int i = 0; i < Hits.Length; i++)
+        impulse.GenerateImpulse();
+        if (SlicetoLeft)
+        {
+            Sparks[0].Play();
+        }
+        else Sparks[1].Play();
+
+        for (int i = 0; i < Hits.Length; i++)
         {
             Material mat = Hits[i].GetComponent<Cuttable>().internalMaterial;
             SlicedHull hull = SliceObject(Hits[i].gameObject, mat);
@@ -59,6 +72,7 @@ public class CutPath : MonoBehaviour
 
             }
         }
+        SlicetoLeft = !SlicetoLeft;
     }
 
     SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)
