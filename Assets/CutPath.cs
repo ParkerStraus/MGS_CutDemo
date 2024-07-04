@@ -46,18 +46,24 @@ public class CutPath : MonoBehaviour
     {
         Slice.Play();
         print("Slice and dice");
-        Collider[] Hits = Physics.OverlapBox(this.gameObject.transform.position, new Vector3(10, 0.1f, 10), this.transform.rotation, 1 << LayerMask.NameToLayer("Cuttable"));
+        Collider[] Hits = Physics.OverlapBox(this.gameObject.transform.position, 
+            new Vector3(10, 0.1f, 10), this.transform.rotation, 1 << LayerMask.NameToLayer("Cuttable"));
 
         if (Hits.Length <= 0) return;
 
         impulse.GenerateImpulse();
         if (SlicetoLeft)
         {
+            Sparks[0].gameObject.transform.position = Hits[0].transform.position;
             Sparks[0].Play();
         }
-        else Sparks[1].Play();
+        else
+        {
+            Sparks[1].gameObject.transform.position = Hits[0].transform.position;
+            Sparks[1].Play();
+        }
 
-        for (int i = 0; i < Hits.Length; i++)
+            for (int i = 0; i < Hits.Length; i++)
         {
             Material mat = Hits[i].GetComponent<Cuttable>().internalMaterial;
             SlicedHull hull = SliceObject(Hits[i].gameObject, mat);
